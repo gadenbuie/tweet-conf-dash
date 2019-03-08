@@ -318,7 +318,7 @@ dashboardPage(
           box(
             title = "About me",
             status = "danger",
-            width = "6 col-md-4",
+            width = "6 col-lg-4",
             tags$p(
               class = "text-center",
               tags$img(class = "img-responsive img-rounded center-block", src = "grrrck.jpg", style = "max-width: 150px;")
@@ -359,7 +359,7 @@ dashboardPage(
           box(
             title = "About this Dashboard",
             # status = "primary",
-            width = "6 col-md-4",
+            width = "6 col-lg-4",
             tags$p(
               class = "text-center",
               tags$a(
