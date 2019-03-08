@@ -191,6 +191,6 @@ if (exists("DEMO") && !is.null(DEMO$relive_date)) {
     as.numeric() %>%
     ceiling()
 
-  .workshop_start   <<- .workshop_start + days(DEMO$adjust_days)
-  .conference_start <<- .conference_start + days(DEMO$adjust_days)
+  .workshop_start   <<- as_date(.workshop_start + days(DEMO$adjust_days))
+  .conference_start <<- as_date(.conference_start + days(DEMO$adjust_days))
 }
