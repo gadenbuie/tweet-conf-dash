@@ -6,6 +6,11 @@
   GithubRepo: shinydashboard
   GithubRef: dev
   GithubSHA1: 2dfe619d92193de2b0b1d74be48798f994ea882b
+- Package: shinyThings
+  GithubUsername: gadenbuie
+  GithubRepo: shinyThings
+  GithubRef: master
+  GithubSHA1: 2743329525c5a76d4798ff3acedb70db9562b64f
 - Package: forcats
   Repository: CRAN
   Version: 0.4.0
