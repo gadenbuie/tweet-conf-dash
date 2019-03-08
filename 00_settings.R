@@ -178,3 +178,19 @@ BLOCKLIST <- list(
     "paukniccadi"
   )
 )
+
+
+# Demo Settings -----------------------------------------------------------
+DEMO <- list(
+  relive_date = ymd("2019-01-18", tz = tz_global())
+)
+
+if (exists("DEMO") && !is.null(DEMO$relive_date)) {
+  DEMO$adjust_days <-
+    difftime(today_tz(), DEMO$relive_date, unit = "day") %>%
+    as.numeric() %>%
+    ceiling()
+
+  .workshop_start   <<- .workshop_start + days(DEMO$adjust_days)
+  .conference_start <<- .conference_start + days(DEMO$adjust_days)
+}

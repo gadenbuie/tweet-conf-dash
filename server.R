@@ -7,6 +7,40 @@
 # tweets <- function() .tweets_all %>% filter(is_topic)
 
 function(session, input, output) {
+  # ---- Demo Modal ----
+  if (exists("DEMO") && !is.null(DEMO$relive_date)) {
+    showModal(
+      modalDialog(
+        title = strftime(DEMO$relive_date, "Welcome to %A, %B %e!", tz = tz_global()),
+        easyClose = TRUE,
+        footer = modalButton("Welcome to the Past"),
+        tags$p(
+          "No, you're not stuck in a Russian Doll time-loop scenario!"
+        ),
+        tags$p(
+          "It's just that this dashboard is more fun when a conference is going on",
+          "than after the fact. So we're going to pretend that",
+          tags$strong(META$conf_org), "is going on right now, as if today were",
+          strftime(DEMO$relive_dat, "%A, %B %e!", tz = tz_global())
+        ),
+        tags$p(
+          "The dates in tweet previews will be correct, but everywhere else in the app"
+        ),
+        tags$ul(
+          tags$li(
+            strftime(now(), "%b %e"), "is really", strftime(DEMO$relive_date, "%b %e")
+          ),
+          tags$li(
+            strftime(now() - days(), "%b %e"), "is really", strftime(DEMO$relive_date - days(), "%b %e")
+          ),
+          tags$li(
+            strftime(now() - days(2), "%b %e"), "is really", strftime(DEMO$relive_date - days(2), "%b %e")
+          ),
+          tags$li("and so on...")
+        )
+      )
+    )
+  }
 
   # Global Reactives --------------------------------------------------------
   tweets_all <- reactiveFileReader(1 * 60 * 1000, session, TWEETS_FILE, function(file) {
@@ -18,6 +52,14 @@ function(session, input, output) {
       blocklist   = BLOCKLIST
     ) %>%
       tweets_by_engaged_users() # dummy function that can be used to filter out noise
+
+    if (exists("DEMO") && !is.null(DEMO$relive_date)) {
+      x <- x %>%
+        mutate(created_at = created_at + days(DEMO$adjust_days)) %>%
+        filter(created_at <= now(tz_global()))
+      invalidateLater(1000 * 60 * 5) # "update" in 5 minutes
+    }
+    x
   })
 
   tweets <- reactive({
