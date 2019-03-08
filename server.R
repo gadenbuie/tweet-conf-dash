@@ -10,24 +10,14 @@ function(session, input, output) {
 
   # Global Reactives --------------------------------------------------------
   tweets_all <- reactiveFileReader(1 * 60 * 1000, session, TWEETS_FILE, function(file) {
-    x <- import_tweets(file,
-                       tz_global   = tz_global(),
-                       topic_terms = TOPIC$terms,
-                       start_date  = TWEETS_START_DATE,
-                       blocklist   = BLOCKLIST)
-
-    # engaged_users <-
-    #   x %>%
-    #   select(screen_name, user_id, hashtags, is_topic) %>%
-    #   unnest() %>%
-    #   filter(is_topic, tolower(hashtags) %in% unlist(TOPIC$terms)) %>%
-    #   distinct(screen_name, user_id, hashtags = tolower(hashtags)) %>%
-    #   group_by(screen_name, user_id) %>%
-    #   count() %>%
-    #   filter(n > 1) %>%
-    #   pull(user_id)
-    #
-    # x %>% filter(user_id %in% engaged_users)
+    x <- import_tweets(
+      file,
+      tz_global   = tz_global(),
+      topic_terms = TOPIC$terms,
+      start_date  = TWEETS_START_DATE,
+      blocklist   = BLOCKLIST
+    ) %>%
+      tweets_by_engaged_users() # dummy function that can be used to filter out noise
   })
 
   tweets <- reactive({

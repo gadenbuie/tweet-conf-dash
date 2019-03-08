@@ -102,6 +102,13 @@ top_tweets <- function(tweets, top_n = 10, ..., descending = TRUE) {
   }
 }
 
+tweets_by_engaged_users <- function(tweets, ...) {
+  # Currently just a dummy function. If you want to apply filters to discard
+  # tweets by spam or unrelated users when using a noisy search term, this
+  # is the place to add those filters.
+  tweets
+}
+
 simplify_tweets <- function(tweets, collapse_list = NULL) {
   library(dplyr)
   tweets <-
