@@ -382,11 +382,11 @@ function(session, input, output) {
   })
 
   tweet_wall_date_preset <- shinyThings::dropdownButton("tweet_wall_date_presets",
-                                                        options = TWEET_WALL_DATE_PRESETS)
+                                                        options = TWEET_WALL_DATE_INPUTS)
 
   observe({
     req(tweet_wall_date_preset())
-    update_dates <- TWEET_DATE_RANGE_TEMPLATE(tweet_wall_date_preset())
+    update_dates <- TWEET_WALL_DATE_RANGE(tweet_wall_date_preset())
     if (any(is.na(update_dates))) return(NULL)
     update_dates <- strftime(update_dates, "%F", tz = tz_global(), usetz = TRUE) %>% unname()
     updateDateRangeInput(session, "tweet_wall_daterange", start = update_dates[1], end = update_dates[2], max = now(tz_global()))

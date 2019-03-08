@@ -5,8 +5,8 @@ dashboard_box_size <- if (is.null(TOPIC$full_community)) "3" else "4 col-lg-2"
 
 dashboardPage(
   title = META$name,
-  skin = META$skin_color,
-  theme = c("ocean-next/AdminLTE.css", "ocean-next/_all-skins.css", "custom.css"),
+  skin  = META$skin_color,
+  theme = c(META$theme_css, "custom.css"),
   sidebar_mini = TRUE,
   dashboardHeader(
     title = HTML(glue::glue(
@@ -223,14 +223,14 @@ dashboardPage(
               tags$div(
                 class = "form-group",
                 tags$div(
-                  class = "btn-toolbar",
+                  class = "btn-toolbar btn-group-sm",
                   dateRangeInput("tweet_wall_daterange", "",
                                  start = today(tz_global()), end = today(tz_global()),
                                  min = "2019-01-01", max = today(tz_global()),
                                  weekstart = 1, separator = " to "),
                   shinyThings::dropdownButtonUI("tweet_wall_date_presets",
-                                                TWEET_WALL_DATE_PRESETS,
-                                                class = "btn-group-sm")
+                                                TWEET_WALL_DATE_INPUTS,
+                                                class = "btn-default")
                 )
               )
             )
