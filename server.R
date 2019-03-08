@@ -15,7 +15,7 @@ function(session, input, output) {
         easyClose = TRUE,
         footer = modalButton("Welcome to the Past"),
         tags$p(
-          "No, you're not stuck in a Russian Doll time-loop scenario!"
+          "No, you're not stuck in a", tags$em("Russian Doll"), "time-loop scenario!"
         ),
         tags$p(
           "It's just that this dashboard is more fun when a conference is going on",
@@ -24,7 +24,7 @@ function(session, input, output) {
           strftime(DEMO$relive_dat, "%A, %B %e!", tz = tz_global())
         ),
         tags$p(
-          "The dates in tweet previews will be correct, but everywhere else in the app"
+          "The dates in tweet previews will be correct, but everywhere else in the app:"
         ),
         tags$ul(
           tags$li(
@@ -37,7 +37,10 @@ function(session, input, output) {
             strftime(now() - days(2), "%b %e"), "is really", strftime(DEMO$relive_date - days(2), "%b %e")
           ),
           tags$li("and so on...")
-        )
+        ),
+        tags$p("Come back tomorrow and relive it all over again!"),
+        tags$p(HTML("&mdash; Garrick"),
+               HTML('(<a href="https://twitter.com/grrrck" target="_blank">&commat;grrrck</a>)'))
       )
     )
   }
