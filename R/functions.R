@@ -1,7 +1,28 @@
 `%||%` <- function(x,y) if (is.null(x)) y else x
 
-is_topic_tweet <- function(tweets, ..., var_name = "is_topic") {
-  topics <- c(...)
+import_tweets <- function(
+  file,
+  tz_global = tz_global(),
+  topic_terms = NULL,
+  start_date = NULL,
+  blocklist = NULL
+) {
+  tweets <-
+    readRDS(file) %>%
+    mutate(created_at = lubridate::with_tz(created_at, tz_global())) %>%
+    tweets_since(TWEETS_START_DATE) %>%
+    tweets_not_hashdump() %>%
+    tweets_block(blocklist$status_id, blocklist$screen_name) %>%
+    arrange(desc(created_at)) %>%
+    is_topic_tweet(topic_terms)
+
+  if (!"is_quote" %in% names(tweets)) tweets$is_quote <- FALSE
+  if (!"is_retweet" %in% names(tweets)) tweets$is_retweet <- FALSE
+  tweets
+}
+
+is_topic_tweet <- function(tweets, topics = NULL, var_name = "is_topic") {
+  if (is.null(topics)) return(tweets)
   tweets %>%
     mutate(!!var_name := str_detect(tolower(text), paste0("(", topics, ")", collapse = "|")))
 }
@@ -43,6 +64,7 @@ tweets_in_last <- function(tweets, d = 0, h = 0, m = 15, s = 0) {
 }
 
 tweets_since <- function(tweets, since = "2019-01-01", tz = NULL) {
+  if (is.null(since)) return(tweets)
   if (is.character(since)) since <- lubridate::ymd_hms(since, truncated = 3, tz = tz_global(tz))
   tweets %>%
     filter(created_at >= since)
@@ -57,6 +79,16 @@ tweets_not_hashdump <- function(tweets) {
     mutate(n_hash = map_int(hashtags, length)) %>%
     filter(n_hash <= 7) %>%
     select(-n_hash)
+}
+
+tweets_block <- function(tweets, status_id = NULL, screen_name = NULL) {
+  if (!is.null(status_id)) {
+    tweets <- tweets %>% filter(!status_id %in% !!status_id)
+  }
+  if (!is.null(screen_name)) {
+    tweets <- tweets %>% filter(!screen_name %in% !!screen_name)
+  }
+  tweets
 }
 
 top_tweets <- function(tweets, top_n = 10, ..., descending = TRUE) {

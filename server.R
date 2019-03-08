@@ -10,16 +10,11 @@ function(session, input, output) {
 
   # Global Reactives --------------------------------------------------------
   tweets_all <- reactiveFileReader(1 * 60 * 1000, session, TWEETS_FILE, function(file) {
-    x <- readRDS(file) %>%
-      mutate(created_at = lubridate::with_tz(created_at, tz_global())) %>%
-      tweets_since(TWEETS_START_DATE) %>%
-      tweets_not_hashdump() %>%
-      filter(
-        !status_id %in% BLOCKLIST$status_id,
-        !screen_name %in% BLOCKLIST$screen_name
-      ) %>%
-      arrange(desc(created_at)) %>%
-      is_topic_tweet(rlang::splice(TOPIC$terms))
+    x <- import_tweets(file,
+                       tz_global   = tz_global(),
+                       topic_terms = TOPIC$terms,
+                       start_date  = TWEETS_START_DATE,
+                       blocklist   = BLOCKLIST)
 
     # engaged_users <-
     #   x %>%
