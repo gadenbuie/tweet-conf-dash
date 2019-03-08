@@ -184,8 +184,7 @@ function(session, input, output) {
       config(displayModeBar = FALSE) %>%
       layout(
         xaxis = list(
-          range = c(ymd_hms("2019-01-15 00:00:00", tz = TZ_GLOBAL), now(tz_global())),
-          # range = c("2019-01-11 12", "2019-01-12 12"),
+          range = c(now(tz_global()) - days(7), now(tz_global())),
           rangeselector = list(
             buttons = list(
               list(
