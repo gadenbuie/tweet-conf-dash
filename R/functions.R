@@ -191,14 +191,24 @@ tweet_cache_oembed <- function(tweets, cache = "data/tweets_oembed.rds") {
   } else {
     oembed <- tibble(status_id = character(), oembed = character())
   }
-  if (!"oembed" %in% names(tweets)) tweets$oembed <- NA
+
+  if (!"oembed" %in% names(tweets)) tweets$oembed <- map(seq_len(nrow(tweets)), ~ NULL)
+
   is_needed <- map_lgl(tweets$oembed, is.null)
-  tweets$oembed[is_needed] <- furrr::future_pmap(tweets[is_needed, ], get_tweet_blockquote, null_on_error = FALSE, .progress = TRUE)
-  oembed_new <- tweets %>% select(status_id, oembed)
-  oembed <- bind_rows(
-    semi_join(oembed_new, oembed, by = "status_id"),
-    anti_join(oembed_new, oembed, by = "status_id")
-  )
-  saveRDS(oembed, cache)
+  if (any(is_needed)) {
+    tweets$oembed[is_needed] <- if (requireNamespace("furrr", quietly = TRUE)) {
+      furrr::future_pmap(tweets[is_needed, ], get_tweet_blockquote, null_on_error = FALSE, .progress = TRUE)
+    } else {
+      pmap(tweets[is_needed, ], get_tweet_blockquote, null_on_error = FALSE)
+    }
+    oembed_new <- tweets %>% select(status_id, oembed)
+    # oembed may be a superset of the oembed we got from these tweets
+    # so the following keeps the old oembed not contained in oembed_new
+    oembed <- bind_rows(
+      semi_join(oembed_new, oembed, by = "status_id"),
+      anti_join(oembed_new, oembed, by = "status_id")
+    )
+    saveRDS(oembed, cache)
+  }
   return(tweets)
 }

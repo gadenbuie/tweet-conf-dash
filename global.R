@@ -43,16 +43,26 @@ scale_fill_adminlte <- function(direction = 1, color_other = "grey", ...) {
   ggplot2::discrete_scale("fill", "adminlte", adminlte_pal(direction, color_other))
 }
 
+# ---- Bootstrap App ----
 if (!file.exists("www/twitter-default-profile.jpg")) {
   download.file("https://pbs.twimg.com/profile_images/453289910363906048/mybOhh4Z_400x400.jpeg", "www/twitter-default-profile.jpg")
 }
 
-# ---- Blocklist ----
-BLOCKLIST <- list(
-  status_id = list(
-    "1087748087454535680"
-  ),
-  screen_name = list(
-    "paukniccadi"
-  )
-)
+if (!file.exists(here::here("data", "tweets_oembed.rds"))) {
+  message("Getting Tweet oembed HTML, this may take a minute...")
+  if (requireNamespace("furrr", quietly = TRUE)) {
+    message("Using {furrr} to speed up the process")
+    future::plan(future::multiprocess)
+  }
+  tweets <- import_tweets(
+    TWEETS_FILE,
+    tz_global   = tz_global(),
+    topic_terms = TOPIC$terms,
+    start_date  = TWEETS_START_DATE,
+    blocklist   = BLOCKLIST
+  ) %>%
+    filter(is_topic) %>%
+    tweet_cache_oembed()
+
+  rm(tweets)
+}
