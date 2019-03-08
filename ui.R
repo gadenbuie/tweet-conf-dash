@@ -4,6 +4,7 @@ library(shinydashboard)
 dashboard_box_size <- if (is.null(TOPIC$full_community)) "3" else "4 col-lg-2"
 
 dashboardPage(
+  # Dashboard Page Setup ----------------------------------------------------
   title = META$name,
   skin  = META$skin_color,
   theme = c(META$theme_css, "custom.css"),
@@ -14,6 +15,8 @@ dashboardPage(
       <span class="logo-lg">{META$logo_lg}</span>'
     ))
   ),
+
+  # Dashboard Sidebar -------------------------------------------------------
   dashboardSidebar(
     sidebarMenu(
       menuItem("Dashboard", tabName = "tab_dashboard", icon = icon("dashboard")),
@@ -30,11 +33,16 @@ dashboardPage(
       menuItem("About", tabName = "tab_about", icon = icon("info"))
     )
   ),
+
+  # Dashboard Body ----------------------------------------------------------
   dashboardBody(
     tabItems(
+
+      # Frontpage - tab_dashboard -----------------------------------------------
       tabItem(
         "tab_dashboard",
         tags$head(
+          # Metadata <head> ---------------------------------------------------------
           HTML(glue::glue(
             '<meta property="og:title" content="{META$name}">
             <meta property="og:description" content="{META$description}">
@@ -61,23 +69,24 @@ dashboardPage(
             <meta name="msapplication-TileImage" content="ms-icon-144x144.png">
             <meta name="theme-color" content="#6699CC">
             '
-          ))
+          )),
+          if (!is.null(GA_KEY)) HTML(
+            glue::glue(
+              '
+              <!-- Global site tag (gtag.js) - Google Analytics -->
+              <script async src="https://www.googletagmanager.com/gtag/js?id={GA_KEY}"></script>
+              <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){{dataLayer.push(arguments);}}
+                  gtag(\'js\', new Date());
+                  gtag(\'config\', \'{GA_KEY}\');
+               </script>
+              ')
+          )
+          # Metadata <head> end -----------------------------------------------------
         ),
-        if (!is.null(GA_KEY)) tags$head(HTML(
-          glue::glue(
-          '
-          <!-- Global site tag (gtag.js) - Google Analytics -->
-          <script async src="https://www.googletagmanager.com/gtag/js?id={GA_KEY}"></script>
-          <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){{dataLayer.push(arguments);}}
-              gtag(\'js\', new Date());
-
-              gtag(\'config\', \'{GA_KEY}\');
-           </script>
-          ')
-        )),
         fluidRow(
+          # Frontpage - boxes - start -----------------------------------------------
           valueBox(
             inputId = "total_today",
             "—", "Tweets Today",
@@ -114,8 +123,10 @@ dashboardPage(
             color = "fuchsia",
             icon = icon(META$topic_icon_full),
             width = dashboard_box_size)
+          # Frontpage - boxes - end -------------------------------------------------
         ),
         fluidRow(
+          # Frontpage - tweet volume plots - start ----------------------------------
           tabBox(
             width = 12,
             tabPanel(
@@ -129,8 +140,10 @@ dashboardPage(
               withSpinner(plotlyOutput("plot_tweets_by_hour", height = "250px"))
             )
           )
+          # Frontpage - tweet volume plots - end ------------------------------------
         ),
         fluidRow(
+          # Frontpage - Most XX Tweets - start --------------------------------------
           column(
             width = 8,
             offset = 2,
@@ -155,8 +168,11 @@ dashboardPage(
             tags$h4(HTML(twemoji("1F389"), "Most Recent")),
             withSpinner(uiOutput("dash_most_recent"), proxy.height = "200px")
           )
+          # Frontpage - Most XX Tweets - end ----------------------------------------
         )
       ),
+
+      # High Score - tab_high_score ---------------------------------------------
       tabItem(
         "tab_high_score",
         fluidRow(
@@ -197,10 +213,13 @@ dashboardPage(
           )
         )
       ),
+
+      # Tweet Wall - tab_tweet_wall ---------------------------------------------
       tabItem(
         "tab_tweet_wall",
         class = "text-center",
         tags$h1("Tweets about", TOPIC$name),
+        # Tweet Wall - twitter.js and masonry.css - start --------------------
         # twitter.js has to be loaded after the page is loaded (divs exist and jquery is loaded)
         tags$head(HTML(
         '
@@ -214,8 +233,10 @@ dashboardPage(
         </script>
         ')),
         tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "masonry.css")),
+        # Tweet Wall - twitter.js and masonry.css - end ----------------------
         fluidRow(
           column(
+            # Tweet Wall - Controls - start -------------------------------------------
             12,
             class = "col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3",
             tags$form(
@@ -234,12 +255,15 @@ dashboardPage(
                 )
               )
             )
+            # Tweet Wall - Controls - end ---------------------------------------------
           ),
           shinyThings::paginationUI("tweet_wall_pager", width = 12, offset = 0)
         ),
         withSpinner(uiOutput("tweet_wall_tweets"), type = 3),
         shinyThings::pagerUI("tweet_wall_pager", centered = TRUE)
       ),
+
+      # Pictures - tab_pic_tweets -----------------------------------------------
       tabItem(
         "tab_pic_tweets",
         class = "text-center",
@@ -248,12 +272,16 @@ dashboardPage(
         withSpinner(uiOutput("pic_tweets_wall"), type = 3),
         shinyThings::pagerUI("pic_tweets", centered = TRUE)
       ),
+
+      # Explore - tab_explore ---------------------------------------------------
       tabItem(
         "tab_explore",
         fluidRow(
           tweetExplorerUI("tweet_table", collapsed = TRUE, status = "success")
         )
       ),
+
+      # Schedule - tab_schedule -------------------------------------------------
       if (!is.null(SCHEDULE$data)) tabItem(
         "tab_schedule",
         fluidRow(
@@ -269,9 +297,24 @@ dashboardPage(
           )
         )
       ) else tags$div(class = "tab-pane"),
+
+      # About - tab_about -------------------------------------------------------
       tabItem(
         "tab_about",
+        #
+        # Note About Credit
+        # =================
+        #
+        # You may, of course, decide to change this section of the dashboard.
+        # But PLEASE provide credit and link to my website: garrickadenbuie.com
+        # Something like this would be great:
+        #
+        # "This dashboard was built using a template provided by
+        # <a href="https://garrickadenbuie.com">Garrick Aden-Buie</a>."
+        #
+        # Thank you! -Garrick
         fluidRow(
+          # About - About Me - start ------------------------------------------------
           box(
             title = "About me",
             status = "danger",
@@ -311,6 +354,8 @@ dashboardPage(
               HTML(paste0(tags$a(href = "mailto:garrick@adenbuie.com", "garrick@adenbuie.com"), "."))
             )
           ),
+          # About - About Me - end --------------------------------------------------
+          # About - About Dashboard - start -----------------------------------------
           box(
             title = "About this Dashboard",
             # status = "primary",
@@ -354,8 +399,11 @@ dashboardPage(
               "and many more packages."
             )
          )
+          # About - About Dashboard - start -----------------------------------------
         )
       )
     )
   )
 )
+
+
