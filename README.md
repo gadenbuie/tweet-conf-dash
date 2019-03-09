@@ -28,8 +28,6 @@ Currently, the dashboard includes the following tabs and features:
 
 - &#x1F3B0; **Tweet Wall** 
 
-    <img src="man/tweet-dash-screenshot-tweet-wall.png" width="33%" align="right" />
-    
     The **Tweet Wall** shows all of the tweets from the conference in a Pinterest-style wall. Users can quickly scan and read the stream of tweets from the conference or event. Additional, configurable date filters allow users to look for tweets from particular date ranges.
 
 - &#x1F4F8; **Media Tweet Wall** 
@@ -40,8 +38,6 @@ Currently, the dashboard includes the following tabs and features:
 
     It is notoriously difficult to use Twitter's search features to find specific tweets. The **Explore** tab provides a searchable [dataTable] of tweets with a number of pre-specified filters. Users can search for text in any field or sort by date or number of favorites or likes. Clicking on a tweet in the table shows the tweet alongside the table in its original context.
     
-    <img src="man/tweet-dash-screenshot-explore.png" width="33%" align="right"/>
-
 - &#x1F4C6; **Conference Schedule**
 
     Conference schedules also tend to be difficult to search and interact with. But if a downloadable (or scrapable) conference schedule is available, it can be embedded directly into the app with the full search and ordering capabilities of [dataTables]. If a tidy schedule table isn't available, the tab's link can point directly to the conference or event schedule on an external website.
