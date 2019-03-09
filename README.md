@@ -62,7 +62,7 @@ This dashboard was built using many great tools in the R ecosystem. Thanks to al
 
 I also built a few things to make this work, including:
 
-- [gathertweet] - A command line tool for gathering tweets from Twitter search streams.
+- [gathertweet] - A command line tool for gathering tweets from Twitter search streams. Removes the boilerplate of collecting Twitter data and plays nicely with `cron`.
 
 - [shinyThings] - [shiny] modules for pagination and dropdown buttons.
 
