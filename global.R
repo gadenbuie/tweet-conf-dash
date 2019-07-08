@@ -1,15 +1,5 @@
 # ---- Library ----
-library(shiny)
-library(shinydashboard)
-library(forcats)
-library(ggplot2)
-library(plotly)
-library(lubridate)
-library(stringr)
-library(tidyr)
-library(purrr)
-library(dplyr)
-library(shinycssloaders)
+source(here::here("R/packages.R"))
 
 # ---- tweet-conf-dash Functions ----
 source(here::here("R/functions.R"))
@@ -44,25 +34,11 @@ scale_fill_adminlte <- function(direction = 1, color_other = "grey", ...) {
 }
 
 # ---- Bootstrap App ----
-if (!file.exists("www/twitter-default-profile.jpg")) {
-  download.file("https://pbs.twimg.com/profile_images/453289910363906048/mybOhh4Z_400x400.jpeg", "www/twitter-default-profile.jpg")
-}
+source(here::here("01_first-run.R"))
 
-if (!file.exists(here::here("data", "tweets_oembed.rds"))) {
-  message("Getting Tweet oembed HTML, this may take a minute...")
-  if (requireNamespace("furrr", quietly = TRUE)) {
-    message("Using {furrr} to speed up the process")
-    future::plan(future::multiprocess)
-  }
-  tweets <- import_tweets(
-    TWEETS_FILE,
-    tz_global   = tz_global(),
-    topic_terms = TOPIC$terms,
-    start_date  = TWEETS_START_DATE,
-    blocklist   = BLOCKLIST
-  ) %>%
-    filter(is_topic) %>%
-    tweet_cache_oembed()
-
-  rm(tweets)
+tweets_file_exist <- TWEETS_FILE %>% keep(file.exists)
+if (!length(tweets_file_exist)) {
+  stop("The TWEETS_FILE(s) do not exist: ", paste(TWEETS_FILE, collapse = ", "))
 }
+TWEETS_FILE <- tweets_file_exist[1]
+message("Using tweets from: ", TWEETS_FILE)

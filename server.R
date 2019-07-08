@@ -1,10 +1,10 @@
 # debug
-# .tweets_all <- readRDS(here::here("data/tweets.rds")) %>%
-#       mutate(created_at = lubridate::with_tz(created_at, tz_global())) %>%
-#       tweets_since(TWEETS_START_DATE) %>%
-#       tweets_not_hashdump() %>%
-#       is_topic_tweet(rlang::splice(TOPIC$terms))
-# tweets <- function() .tweets_all %>% filter(is_topic)
+.tweets_all <- readRDS(here::here("data/tweets.rds")) %>%
+      mutate(created_at = lubridate::with_tz(created_at, tz_global())) %>%
+      tweets_since(TWEETS_START_DATE) %>%
+      tweets_not_hashdump() %>%
+      is_topic_tweet(TOPIC$terms)
+tweets <- function() .tweets_all %>% filter(is_topic)
 
 function(session, input, output) {
   # ---- Demo Modal ----
@@ -46,7 +46,44 @@ function(session, input, output) {
   }
 
   # Global Reactives --------------------------------------------------------
-  tweets_all <- reactiveFileReader(1 * 60 * 1000, session, TWEETS_FILE, function(file) {
+  if (TWEETS_MANAGE_UPDATES) {
+    observe({
+      # This block periodically updates the twitter feed every UPDATE_EVERY secs.
+      # Running this once every 5-10 minutes is enough.
+      UPDATE_EVERY <- 5 * 60
+
+      # incrementally update if file is 2+ hrs old or if within 2 updates of the hour
+      tweet_file_age <- file_age(TWEETS_FILE)
+      incremental <- tweet_file_age < 2 * 60 * 60 ||
+        now() > (floor_date(now(), "hour") + UPDATE_EVERY * 1.95)
+
+      if (tweet_file_age < UPDATE_EVERY) {
+        invalidateLater(UPDATE_EVERY * 1000)
+        return()
+      }
+
+      message(strfnow(), "tweet update triggered by session ", session$token)
+      dir.create("data/log", showWarnings = FALSE, recursive = TRUE)
+
+      callr::r_bg(
+        gathertweet_auto,
+        args = list(
+          TOPIC = TOPIC,
+          incremental = incremental,
+          tweet_file = TWEETS_FILE
+        ),
+        stdout = strftime(Sys.time(), "data/log/gathertweet_%F%H%M%S.log"),
+        stderr = strftime(Sys.time(), "data/log/gathertweet_%F%H%M%S.log"),
+        supervise = TRUE
+      )
+      message(strfnow(), "tweet update complete ", session$token)
+      invalidateLater(UPDATE_EVERY * 1000)
+    })
+  }
+
+
+
+  tweets_all <- reactiveFileReader(1 * 30 * 1000, session, TWEETS_FILE, function(file) {
     x <- import_tweets(
       file,
       tz_global   = tz_global(),
@@ -456,8 +493,7 @@ function(session, input, output) {
         autoHideNavigation = TRUE,
         selection = "none",
         extensions = "Responsive",
-        options = list(searchHighlight = TRUE),
-        colnames = c("Session", "Day", "Start", "End", "Track", "Title", "Speaker", "Description")
+        options = list(searchHighlight = TRUE)
       )
   })
 

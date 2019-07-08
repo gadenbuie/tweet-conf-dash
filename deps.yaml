@@ -11,6 +11,11 @@
   GithubRepo: shinyThings
   GithubRef: master
   GithubSHA1: 2743329525c5a76d4798ff3acedb70db9562b64f
+- Package: gathertweet
+  GithubUsername: gadenbuie
+  GithubRepo: gathertweet
+  GithubRef: master
+  GithubSHA1: 97058c381ce729926adbf0822bd688c2e78d38ca
 - Package: forcats
   Repository: CRAN
   Version: 0.4.0
@@ -76,3 +81,6 @@
 - Package: knitr
   Repository: CRAN
   Version: '1.21'
+- Package: callr
+  Repository: CRAN
+  Version: 3.1.1

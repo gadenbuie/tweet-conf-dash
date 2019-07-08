@@ -21,10 +21,75 @@ import_tweets <- function(
   tweets
 }
 
+gathertweet_auto <- function(
+  TOPIC,
+  tweet_file = "data/tweets.rds",
+  incremental = FALSE
+) {
+  # inlining some functions
+  logmsg <- function(...) message(strftime(Sys.time(), "[%F %T %Z] "), ...)
+  file_age <- function(path) {
+    file_changed <- file.info(path)$mtime
+    difftime(Sys.time(), file_changed, units = "secs")
+  }
+
+  if (grepl("_simplified", tweet_file)) {
+    tweet_file <- sub("_simplified", "", tweet_file)
+  }
+
+  if (file.exists(tweet_file)) {
+    tweet_file_changed_ago <- file_age(tweet_file)
+
+    if (tweet_file_changed_ago <= 5 * 60) {
+      logmsg("Tweets were last updated < 5 minutes ago")
+      return()
+    }
+  }
+
+  # Check or create lockfile
+  if (file.exists("tweet_gather.lock")) {
+    logmsg("Another process is currently gathering tweets")
+    return()
+  }
+  cat(strfnow(), "tweet_gather.lock")
+  on.exit(unlink("tweet_gather.lock", force = TRUE))
+
+  logmsg(
+    if (incremental) "Incremental" else "Full",
+    "tweet updating..."
+  )
+  search_terms <- TOPIC$search_terms
+  if (is.null(search_terms)) search_terms <- TOPIC$terms
+  tweets <-
+    gathertweet::gathertweet_search(
+      terms = c(paste(search_terms, collapse = " OR "), TOPIC$full_community),
+      file = tweet_file,
+      since_id = if (incremental) "last" else "none"
+    )
+  gathertweet::gathertweet_simplify(tweet_file)
+
+  logmsg("Tweet update complete")
+}
+
+file_age <- function(path) {
+  file_changed <- file.info(path)$mtime
+  difftime(Sys.time(), file_changed, units = "secs")
+}
+
+strfnow <- function() strftime(Sys.time(), "[%F %T %Z] ")
+
 is_topic_tweet <- function(tweets, topics = NULL, var_name = "is_topic") {
   if (is.null(topics)) return(tweets)
-  tweets %>%
-    mutate(!!var_name := str_detect(tolower(text), paste0("(", topics, ")", collapse = "|")))
+  tweet_text <- tolower(tweets$text)
+  tweet_is_topical <-
+    topics %>%
+    map(str_detect, string = tweet_text) %>%
+    transpose() %>%
+    map(flatten_lgl) %>%
+    map_lgl(any)
+
+  tweets[[var_name]] <- tweet_is_topical
+  tweets
 }
 
 tweets_just <- function(tweets, ...) {
@@ -170,6 +235,7 @@ masonify_tweets <- function(tweets, id = NULL, class = NULL) {
 
   t_embed <-
     tweets %>%
+    tweet_cache_oembed() %>%
     pmap(get_tweet_blockquote) %>%
     map(HTML) %>%
     map(tags$div, class = "tweet-item")
