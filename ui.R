@@ -193,7 +193,7 @@ dashboardPage(
             withSpinner(uiOutput("top_hashtags")),
             helpText("Times hashtag was used relative to most popular hashtag, excludes",
                      tags$code(TOPIC$name),
-                     if (!is.null(TOPIC$full_community)) paste(
+                     if (!is.null(TOPIC$full_community)) HTML(
                        "and", tags$code(TOPIC$full_community))
                      )
           ),
