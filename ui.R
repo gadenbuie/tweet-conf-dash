@@ -48,7 +48,7 @@ dashboardPage(
             <meta property="og:description" content="{META$description}">
             <meta property="og:url" content="{META$app_url}">
             <meta property="og:image" content="{META$app_icon}">
-            <meta name="twitter:card" content="summary">
+            <meta name="twitter:card" content="summary_large_image">
             <meta name="twitter:creator" content="@grrrck">
             <meta name="twitter:site" content="https://garrickadenbuie.com">
             <link rel="apple-touch-icon" sizes="57x57" href="apple-icon-57x57.png">
