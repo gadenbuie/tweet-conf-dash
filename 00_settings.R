@@ -7,7 +7,7 @@ META <- list(
   # Link to the app, used in social media cards
   app_url     = "https://apps.garrickadenbuie.com/user-2019/",
   # Link to app icon image, used in social media cards
-  app_icon    = "https://garrickadenbuie.com/images/2019/rstudioconf-2019-icon.png",
+  app_icon    = "https://apps.garrickadenbuie.com/user-2019/user-2019-app-image.png",
   # The name of the conference or organization
   conf_org    = "UseR2019",
   # App title, long, shown when sidebar is open, HTML is valid
