@@ -83,6 +83,7 @@ function(session, input, output) {
   }
 
 
+  first_run <- TRUE
 
   tweets_all <- reactiveFileReader(1 * 30 * 1000, session, TWEETS_FILE, function(file) {
     x <- import_tweets(
@@ -93,6 +94,10 @@ function(session, input, output) {
       blocklist   = BLOCKLIST
     ) %>%
       tweets_by_engaged_users() # dummy function that can be used to filter out noise
+
+    if (!first_run) {
+      showNotification("New tweets arrived!", type = "warning")
+    } else first_run <<- FALSE
 
     if (exists("DEMO") && !is.null(DEMO$relive_date)) {
       x <- x %>%
