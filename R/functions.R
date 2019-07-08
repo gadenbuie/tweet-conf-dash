@@ -27,10 +27,11 @@ gathertweet_auto <- function(
   incremental = FALSE
 ) {
   # inlining some functions
-  logmsg <- function(...) message(strftime(Sys.time(), "[%F %T %Z] "), ...)
+  logmsg <- function(...) cat(strftime(Sys.time(), "\n[%F %T %Z] "), ..., file = "data/gathertweet.log", append = TRUE)
+  logmsg("gathertweet_auto() start")
   file_age <- function(path) {
     file_changed <- file.info(path)$mtime
-    difftime(Sys.time(), file_changed, units = "secs")
+    as.numeric(difftime(Sys.time(), file_changed, units = "secs"))
   }
 
   if (grepl("_simplified", tweet_file)) {
@@ -51,8 +52,11 @@ gathertweet_auto <- function(
     logmsg("Another process is currently gathering tweets")
     return()
   }
-  cat(strfnow(), "tweet_gather.lock")
-  on.exit(unlink("tweet_gather.lock", force = TRUE))
+  logmsg("Locking via tweet_gather.lock")
+  on.exit({
+    logmsg("gathertweet_auto() end")
+    unlink("tweet_gather.lock", force = TRUE)
+  })
 
   logmsg(
     if (incremental) "Incremental" else "Full",
@@ -73,7 +77,7 @@ gathertweet_auto <- function(
 
 file_age <- function(path) {
   file_changed <- file.info(path)$mtime
-  difftime(Sys.time(), file_changed, units = "secs")
+  as.numeric(difftime(Sys.time(), file_changed, units = "secs"))
 }
 
 strfnow <- function() strftime(Sys.time(), "[%F %T %Z] ")

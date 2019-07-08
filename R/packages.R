@@ -10,5 +10,6 @@ library(purrr)
 library(dplyr)
 library(shinycssloaders)
 library(future)
+library(promises)
 
 future::plan(future::multisession)

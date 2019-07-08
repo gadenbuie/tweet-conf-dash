@@ -54,30 +54,31 @@ function(session, input, output) {
 
       # incrementally update if file is 2+ hrs old or if within 2 updates of the hour
       tweet_file_age <- file_age(TWEETS_FILE)
-      incremental <- tweet_file_age < 2 * 60 * 60 ||
+      incremental <- tweet_file_age < 2 * 60 * 60 &&
         now() > (floor_date(now(), "hour") + UPDATE_EVERY * 1.95)
 
+      message(strfnow(), "Tweets were updated ", tweet_file_age, "s ago")
       if (tweet_file_age < UPDATE_EVERY) {
         invalidateLater(UPDATE_EVERY * 1000)
         return()
       }
 
       message(strfnow(), "tweet update triggered by session ", session$token)
-      dir.create("data/log", showWarnings = FALSE, recursive = TRUE)
 
-      callr::r_bg(
-        gathertweet_auto,
-        args = list(
+      future::future({
+        gathertweet_auto(
           TOPIC = TOPIC,
           incremental = incremental,
           tweet_file = TWEETS_FILE
-        ),
-        stdout = strftime(Sys.time(), "data/log/gathertweet_%F%H%M%S.log"),
-        stderr = strftime(Sys.time(), "data/log/gathertweet_%F%H%M%S.log"),
-        supervise = TRUE
-      )
-      message(strfnow(), "tweet update complete ", session$token)
+        )
+      }) %...!%
+        (function(e){
+          warning(e)
+        })
+      
       invalidateLater(UPDATE_EVERY * 1000)
+
+      NULL
     })
   }
 
