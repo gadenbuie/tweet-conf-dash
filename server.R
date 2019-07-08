@@ -1,10 +1,10 @@
 # debug
-.tweets_all <- readRDS(here::here("data/tweets.rds")) %>%
-      mutate(created_at = lubridate::with_tz(created_at, tz_global())) %>%
-      tweets_since(TWEETS_START_DATE) %>%
-      tweets_not_hashdump() %>%
-      is_topic_tweet(TOPIC$terms)
-tweets <- function() .tweets_all %>% filter(is_topic)
+# .tweets_all <- readRDS(here::here("data/tweets.rds")) %>%
+#       mutate(created_at = lubridate::with_tz(created_at, tz_global())) %>%
+#       tweets_since(TWEETS_START_DATE) %>%
+#       tweets_not_hashdump() %>%
+#       is_topic_tweet(TOPIC$terms)
+# tweets <- function() .tweets_all %>% filter(is_topic)
 
 function(session, input, output) {
   # ---- Demo Modal ----
