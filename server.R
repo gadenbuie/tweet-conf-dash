@@ -75,7 +75,7 @@ function(session, input, output) {
         (function(e){
           warning(e)
         })
-      
+
       invalidateLater(UPDATE_EVERY * 1000)
 
       NULL
@@ -254,7 +254,7 @@ function(session, input, output) {
         legend = list(orientation = 'h', x = 0.05, y = 0.9),
         hovermode = "compare" # thanks: https://stackoverflow.com/a/46733461/2022615
       ) %>%
-      config(collaborate = FALSE, cloud = FALSE, mathjax = NULL)
+      config(cloud = FALSE, mathjax = NULL)
   })
 
   output$plot_tweets_by_hour <- renderPlotly({

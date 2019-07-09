@@ -1,7 +1,6 @@
 library(shiny)
 library(shinydashboard)
 library(forcats)
-library(ggplot2)
 library(plotly)
 library(lubridate)
 library(stringr)
