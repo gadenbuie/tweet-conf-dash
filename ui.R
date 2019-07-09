@@ -184,7 +184,7 @@ dashboardPage(
               class = "scroll-overflow-x",
               withSpinner(uiOutput("top_tweeters"))
             ),
-            helpText("Weighted average of RT (2x) and favorites (1x) per tweet")
+            helpText(HTML("Total &#x1F504; RT (x2) and &#x2764; Favorites per user"))
           ),
           box(
             width = "6 col-lg-3",

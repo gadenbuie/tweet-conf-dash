@@ -375,7 +375,7 @@ function(session, input, output) {
   output$top_tweeters <- renderUI({
     tweets() %>%
       group_by(screen_name, profile_url, profile_image_url) %>%
-      summarize(engagement = (sum(retweet_count) * 2 + sum(favorite_count)) / n()) %>%
+      summarize(engagement = (sum(retweet_count) * 2 + sum(favorite_count))) %>%
       arrange(desc(engagement)) %>%
       ungroup() %>%
       slice(1:10) %>%
@@ -393,7 +393,7 @@ function(session, input, output) {
         format = "html",
         escape = FALSE,
         align = "cll",
-        col.names = c("", "Screen Name", "Engagement/Tweet "),
+        col.names = c("", "Screen Name", "Engagement"),
         table.attr = 'class = "table"'
       ) %>%
       HTML()

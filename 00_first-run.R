@@ -59,7 +59,7 @@ TWEETS_FILE %>%
     blocklist   = BLOCKLIST
   ) %>%
   group_by(screen_name, profile_url, profile_image_url) %>%
-  summarize(engagement = (sum(retweet_count) * 2 + sum(favorite_count)) / n()) %>%
+  summarize(engagement = (sum(retweet_count) * 2 + sum(favorite_count))) %>%
   arrange(desc(engagement)) %>%
   ungroup() %>%
   slice(1:50) %>%
