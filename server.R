@@ -54,11 +54,20 @@ function(session, input, output) {
 
       # incrementally update if file is 2+ hrs old or if within 2 updates of the hour
       tweet_file_age <- file_age(TWEETS_FILE)
-      incremental <- tweet_file_age < 2 * 60 * 60 &&
-        now() > (floor_date(now(), "hour") + UPDATE_EVERY * 1.95)
+      tweets_are_old <- tweet_file_age > 2 * 60 * 60
+      within_window <- now() > (floor_date(now(), "hour") + UPDATE_EVERY * 1.95)
+      tweets_not_young <- tweet_file_age > UPDATE_EVERY * 1.95
+      full_update <- tweets_are_old || (within_window && tweets_not_young)
 
       message(strfnow(), "Tweets were updated ", tweet_file_age, "s ago")
       if (tweet_file_age < UPDATE_EVERY) {
+        invalidateLater(UPDATE_EVERY * 1000)
+        return()
+      }
+
+      # Check lock file here too
+      if (file.exists("tweet_gather.lock")) {
+        message(strfnow(), "Another process is currently gathering tweets")
         invalidateLater(UPDATE_EVERY * 1000)
         return()
       }
@@ -68,7 +77,7 @@ function(session, input, output) {
       future::future({
         gathertweet_auto(
           TOPIC = TOPIC,
-          incremental = incremental,
+          incremental = !full_update,
           tweet_file = TWEETS_FILE
         )
       }) %...!%
