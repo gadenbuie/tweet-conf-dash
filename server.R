@@ -49,8 +49,8 @@ function(session, input, output) {
   if (TWEETS_MANAGE_UPDATES) {
     observe({
       # This block periodically updates the twitter feed every UPDATE_EVERY secs.
-      # Running this once every 5-10 minutes is enough.
-      UPDATE_EVERY <- 5 * 60
+      # Set TWEETS_MANAGE_UPDATE_INTERVAL in R/custom/00_settings.R
+      UPDATE_EVERY <- TWEETS_MANAGE_UPDATE_INTERVAL
 
       # incrementally update if file is 2+ hrs old or if within 2 updates of the hour
       tweet_file_age <- file_age(TWEETS_FILE)

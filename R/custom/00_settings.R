@@ -82,6 +82,10 @@ TWEETS_FILE <- file.path("data", paste0(c("tweets_simplified", "tweets"), ".rds"
 # Should the app manage tweet updating? If FALSE, assumes that tweets are
 # updated by an external process
 TWEETS_MANAGE_UPDATES <- TRUE
+# Number of seconds betewen tweet updating intervals. 5-10 minutes is generally
+# fine. Updates are done incrementally (new tweets only) unless it has been more
+# than 2 hours since last update or within a window around the start of the hour.
+TWEETS_MANAGE_UPDATE_INTERVAL <- 5 * 60
 
 # ----- Tweets With Most XX Time Window ----
 # Sets the time window for the "Top RT" and "Top Liked" tweets on the front
