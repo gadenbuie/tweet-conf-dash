@@ -65,6 +65,14 @@ function(session, input, output) {
         return()
       }
 
+      rl <- rtweet::rate_limit(query = "search/tweets")
+      if (!isTRUE(rl$remaining > 0)) {
+        message(strfnow(), "Waiting ", sprintf("%0.2f", rl$reset),
+                "min to avoid exceeding rate limit")
+        invalidateLater(as.numeric(rl$reset) * 1000)
+        return()
+      }
+
       # Check lock file here too
       if (file.exists("tweet_gather.lock")) {
         message(strfnow(), "Another process is currently gathering tweets")
