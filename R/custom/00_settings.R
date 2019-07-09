@@ -2,12 +2,6 @@
 META <- list(
   # Name of the app, used in the browser/tab title
   name        = "useR!2019",
-  # A description of the app, used in social media cards
-  description = "A Shiny Dashboard, useR!2019 #FOMO reducer, tweet explorer by @grrrck",
-  # Link to the app, used in social media cards
-  app_url     = "https://apps.garrickadenbuie.com/user-2019/",
-  # Link to app icon image, used in social media cards
-  app_icon    = "https://apps.garrickadenbuie.com/user-2019/user-2019-app-image.png",
   # The name of the conference or organization
   conf_org    = "UseR2019",
   # App title, long, shown when sidebar is open, HTML is valid
@@ -23,6 +17,24 @@ META <- list(
   # AdminLTE theme CSS files
   theme_css   = c("ocean-next/AdminLTE.css", "ocean-next/_all-skins.css")
 )
+
+# ---- META Open Graph Settings ----
+# Twitter card style
+# https://developer.twitter.com/en/docs/tweets/optimize-with-cards/guides/getting-started
+META$app_twitter_card_style <- "summary_large_image"
+
+# A description of the app, used in social media cards
+META$description <- "A Shiny Dashboard, useR!2019 #FOMO reducer, tweet explorer by @grrrck"
+
+# Link to the app, used in social media cards
+META$app_url <- "https://apps.garrickadenbuie.com/user-2019/"
+
+# Link to app icon image, used in social media cards
+META$app_icon <- "https://apps.garrickadenbuie.com/user-2019/user-2019-app-image.png"
+
+# Twitter account and website of dashboard maintaner
+META$twitter_creator <- "@grrrck"
+META$twitter_site <- "https://garrickadenbuie.com"
 
 # ---- Topics Settings ----
 # The dashboard is designed to show tweets related to a conference, using

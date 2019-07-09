@@ -1,13 +1,14 @@
 # ---- Library ----
-source(here::here("R/packages.R"))
+source(here::here("R", "packages.R"))
 
 # ---- tweet-conf-dash Functions ----
-source(here::here("R/functions.R"))
-source(here::here("R/progress_bar.R"))
-source(here::here("R/module/tweetExplorer.R"))
+source(here::here("R", "functions.R"))
+source(here::here("R", "progress_bar.R"))
+source(here::here("R", "module", "tweetExplorer.R"))
 
 # ---- Settings ----
-source(here::here("00_settings.R"))
+# Everything configurable is in R/custom/
+source(here::here("R", "custom", "00_settings.R"))
 
 # ---- Color Helpers ----
 BASIC_COLORS <- c("primary", "info", "success", "danger", "warning")
@@ -34,7 +35,7 @@ scale_fill_adminlte <- function(direction = 1, color_other = "grey", ...) {
 }
 
 # ---- Bootstrap App ----
-source(here::here("01_first-run.R"))
+source(here::here("00_first-run.R"))
 
 tweets_file_exist <- TWEETS_FILE %>% keep(file.exists)
 if (!length(tweets_file_exist)) {
