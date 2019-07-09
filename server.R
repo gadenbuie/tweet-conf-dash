@@ -69,7 +69,7 @@ function(session, input, output) {
       if (!isTRUE(rl$remaining > 0)) {
         message(strfnow(), "Waiting ", sprintf("%0.2f", rl$reset),
                 "min to avoid exceeding rate limit")
-        invalidateLater(as.numeric(rl$reset) * 1000)
+        invalidateLater(as.numeric(rl$reset) * 60 * runif(1, 0, 120) * 1000)
         return()
       }
 
