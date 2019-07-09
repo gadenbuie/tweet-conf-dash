@@ -55,9 +55,8 @@ function(session, input, output) {
       # incrementally update if file is 2+ hrs old or if within 2 updates of the hour
       tweet_file_age <- file_age(TWEETS_FILE)
       tweets_are_old <- tweet_file_age > 2 * 60 * 60
-      within_window <- now() > (floor_date(now(), "hour") + UPDATE_EVERY * 1.95)
-      tweets_not_young <- tweet_file_age > UPDATE_EVERY * 1.95
-      full_update <- tweets_are_old || (within_window && tweets_not_young)
+      first_update_this_hour <- (now() - tweet_file_age) < floor_date(now(), "hour")
+      full_update <- tweets_are_old || first_update_this_hour
 
       message(strfnow(), "Tweets were updated ", tweet_file_age, "s ago")
       if (tweet_file_age < UPDATE_EVERY) {
