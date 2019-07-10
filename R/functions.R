@@ -35,6 +35,7 @@ gathertweet_auto <- function(
     logmsg("Another process is currently gathering tweets")
     return()
   }
+  cat(strftime(Sys.time(), "%F %T %Z"), file = "tweet_gather.lock")
   logmsg("Locking via tweet_gather.lock")
   on.exit({
     logmsg("gathertweet_auto() end")
