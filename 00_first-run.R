@@ -30,9 +30,11 @@ if (!file.exists(here::here("data", "tweets_oembed.rds"))) {
   TWEETS_FILE <- TWEETS_FILE %>% keep(file.exists) %>% .[1]
   message("Using tweets from: ", TWEETS_FILE)
 
-  if (requireNamespace("furrr", quietly = TRUE)) {
+  if (ALLOW_PARALLEL && requireNamespace("furrr", quietly = TRUE)) {
     message("Using {furrr} to speed up the process")
     future::plan(future::multisession)
+  } else {
+    message("(Set `ALLOW_PARALLEL = TRUE`` in 00_settings.R and install {furrr} to speed this up.)")
   }
   tweets <- import_tweets(
     TWEETS_FILE,

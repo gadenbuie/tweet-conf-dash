@@ -86,30 +86,30 @@ TWEETS_MANAGE_UPDATES <- TRUE
 # fine. Updates are done incrementally (new tweets only) unless it has been more
 # than 2 hours since last update or within a window around the start of the hour.
 TWEETS_MANAGE_UPDATE_INTERVAL <- 5 * 60
-# Location of your Twitter PAT from {rtweet}. See {rtweet} for help
-# authenicating your app with Twitter. Then view your users .Renviron (you can
-# use `usethis::edit_r_environ()`) to locate the RDS containing your PAT.
-# If you're deploying on shinyapps.io or elsewhere you should copy this RDS file
-# into your project (usually it's `~/.rtweet_token.rds`) and set the variable
-# below to the correct file name. DON'T COMMIT THIS FILE TO VERSION CONTROL!!
-TWEETS_MANAGE_TWITTER_PAT_RDS <- ".rtweet_token.rds"
 
 if (TWEETS_MANAGE_UPDATES) {
-  # Check that TWITTER_PAT is correctly set
+  # Check that TWITTER_PAT is available. See {rtweet} for help authenticating
+  # your app with Twitter. Then view your users .Renviron (you can use
+  # `usethis::edit_r_environ()`) to locate the RDS containing your PAT. If
+  # you're deploying on shinyapps.io or elsewhere you should copy this RDS file
+  # into your project (usually it's `~/.rtweet_token.rds`) and add
+  #
+  # TWITTER_PAT=".rtweet_token.rds"
+  #
+  # to your project .Renviron (run `usethis::edit_r_environ("project")`).
+  # DON'T COMMIT THE RTWEET TOKEN RDS FILE TO VERSION CONTROL!!
   if (Sys.getenv("TWITTER_PAT") == "") {
-    if (file.exists(TWEETS_MANAGE_TWITTER_PAT_RDS)) {
-      Sys.setenv(TWITTER_PAT = TWEETS_MANAGE_TWITTER_PAT_RDS)
-    } else {
-      warning(
-        "I can't find the file containing your Twitter PAT, so live ",
-        "updating with {rtweet} won't be possible. See {rtweet} for help ",
-        "authenticating and set the config TWEETS_MANAGE_TWITTER_PAT_RDS in ",
-        "'R/custom/00_settings.R'."
-      )
-      TWEETS_MANAGE_UPDATES <- FALSE
-    }
+    warning(
+      "I can't find the file containing your Twitter PAT, so live ",
+      "updating with {rtweet} won't be possible. See {rtweet} for help ",
+      "authenticating and set the config TWEETS_MANAGE_TWITTER_PAT_RDS in ",
+      "'R/custom/00_settings.R'."
+    )
+    TWEETS_MANAGE_UPDATES <- FALSE
   }
 }
+
+ALLOW_PARALLEL <- FALSE
 
 # ----- Tweets With Most XX Time Window ----
 # Sets the time window for the "Top RT" and "Top Liked" tweets on the front

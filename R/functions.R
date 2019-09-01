@@ -275,7 +275,9 @@ tweet_cache_oembed <- function(tweets, cache = "data/tweets_oembed.rds") {
 
   is_needed <- map_lgl(tweets$oembed, is.null)
   if (any(is_needed)) {
-    tweets$oembed[is_needed] <- if (requireNamespace("furrr", quietly = TRUE)) {
+    tweets$oembed[is_needed] <- if (
+      ALLOW_PARALLEL && requireNamespace("furrr", quietly = TRUE)
+    ) {
       furrr::future_pmap(tweets[is_needed, ], get_tweet_blockquote, null_on_error = FALSE, .progress = TRUE)
     } else {
       pmap(tweets[is_needed, ], get_tweet_blockquote, null_on_error = FALSE)
