@@ -3,7 +3,7 @@ if (!exists("META")) {
   # IF RUNNING MANUALLY, RUN FROM A NEW, CLEAN SESSION!
   source(here::here("R", "packages.R"))
   source(here::here("R", "functions.R"))
-  source(here::here("R", "custom", "settings.R"))
+  source(here::here("R", "custom", "00_settings.R"))
 }
 
 # This script initializes the app and may take a while to complete,
