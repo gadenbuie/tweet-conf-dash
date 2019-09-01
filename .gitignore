@@ -9,6 +9,7 @@ google_analytics_key.txt
 restart.txt
 _*.md
 www/profile_images*/
+*rtweet_token*
 
 # Directories that start with _
 _*/
