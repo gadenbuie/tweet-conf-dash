@@ -141,7 +141,8 @@ function(session, input, output) {
       tweets() %>%
       pull(favorite_count) %>%
       sum() %>%
-      format(big.mark = ",", digits = 0)
+      round() %>%
+      format(big.mark = ",")
 
     updateBoxValue(session, "total_favorites", n_favorites)
   })
@@ -153,7 +154,8 @@ function(session, input, output) {
       filter(created_at >= lubridate::today()) %>%
       count() %>%
       pull(n) %>%
-      format(big.mark = ",", digits = 0)
+      round() %>%
+      format(big.mark = ",")
 
     updateBoxValue(session, "total_today", n_topic_tweets_today)
   })
@@ -162,7 +164,8 @@ function(session, input, output) {
     n_all_tweets <-
       tweets_all() %>%
       nrow() %>%
-      format(big.mark = ",", digits = 0)
+      round() %>%
+      format(big.mark = ",")
 
     updateBoxValue(session, "total_all", n_all_tweets)
   })
