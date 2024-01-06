@@ -117,7 +117,8 @@ function(session, input, output) {
       tweets_simple() %>%
       count() %>%
       pull(n) %>%
-      format(big.mark = ",", digits = 0)
+      round() %>%
+      format(big.mark = ",")
 
     updateBoxValue(session, "total_topic", n_topic_tweets)
   })
@@ -129,7 +130,8 @@ function(session, input, output) {
       distinct(screen_name) %>%
       count() %>%
       pull(n) %>%
-      format(big.mark = ",", digits = 0)
+      round() %>%
+      format(big.mark = ",")
 
     updateBoxValue(session, "tweeters_today", n_tweeters_today)
   })
